@@ -4,8 +4,9 @@
 package twitter;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Extract consists of methods that extract information from a list of tweets.
@@ -51,7 +52,39 @@ public class Extract {
      *         include a username at most once.
      */
     public static Set<String> getMentionedUsers(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+        if(tweets == null || tweets.isEmpty()){
+            return new HashSet<>() ;
+        }else{
+            Set<String> mentionedUsers = new HashSet<>();
+            for(Tweet tweet:tweets){
+                String text = tweet.getText();
+                List<String> atGroups = getAtMentions(text);
+                for(String atGroup:atGroups) {
+                    boolean containSpecial = false;
+                    char[] SpecialChars = new char[]{'.', '*', '/', '+', '-'};
+                    for(char c:SpecialChars){
+                        if(atGroup.contains(String.valueOf(c))){
+                            containSpecial = true;
+                            break;
+                        }
+                    }
+                    if(!containSpecial){
+                        mentionedUsers.add(atGroup.substring(1).toLowerCase().trim());//remove the end space is very important
+                    }
+                }
+            }
+            return mentionedUsers;
+        }
+    }
+
+    private static List<String> getAtMentions(String text){
+        Pattern pattern  = Pattern.compile("@[a-zA-Z0-9]+.");
+        Matcher matcher = pattern.matcher(text);
+        List<String> atGroups = new ArrayList<>();
+        while(matcher.find()){
+            atGroups.add(matcher.group(0));
+        }
+        return atGroups;
     }
 
 }

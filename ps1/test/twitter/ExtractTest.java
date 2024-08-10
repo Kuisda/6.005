@@ -36,7 +36,7 @@ public class ExtractTest {
     *if without username-mention,return null
     *if with username-mention,return the username
     *if other used with '@' that not match with the spec,return null
-    *also ,consider the case that username-mention appear in the end or at the beginning of the tweet text
+    *consider about upper and lower case
     * */
     
     private static final Instant d1 = Instant.parse("2016-02-17T10:00:00Z");
@@ -48,8 +48,9 @@ public class ExtractTest {
     private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", d2);
     private static final Tweet tweet3 = new Tweet(3, "cchow", "rivest talk in 1 hour @brother", d3);
     private static final Tweet tweet4 = new Tweet(4, "dferguson", "you can send email to  bitdiddle@mit.edu to ask for help", d4);
-    private static final Tweet tweet5 = new Tweet(5, "ejohnson", "@brother rivest talk in 1 hour", d4);
+    private static final Tweet tweet5 = new Tweet(5, "ejohnson", "@BrOther rivest talk in 1 hour", d4);
     private static final Tweet tweet6 = new Tweet(6, "fgray", "rivest talk @brother in 1 hour ", d4);
+    private static final Tweet tweet7 = new Tweet(6, "fgray", "rivest talk @brother in 1 hour for waiting @puu", d4);
 
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -94,6 +95,16 @@ public class ExtractTest {
         assertTrue("expected empty set", mentionedUsers.isEmpty());
     }
 
+    @Test
+    public void testGetMentionedUsers(){
+        Set<String> mentionedUsers1 = Extract.getMentionedUsers(Arrays.asList());
+        assertTrue("except empty set",mentionedUsers1.isEmpty());
+        Set<String> mentionedUsers2 = Extract.getMentionedUsers(Arrays.asList(tweet3,tweet5,tweet6,tweet7));
+        assertTrue("except true",mentionedUsers2.contains("brother"));
+        assertTrue("except true",mentionedUsers2.contains("puu"));
+        assertFalse("except false",mentionedUsers2.contains("bitdiddle"));
+        assertFalse("except false",mentionedUsers2.contains("brother "));//the name extract shouldn't have space at start or end
+    }
     /*
      * Warning: all the tests you write here must be runnable against any
      * Extract class that follows the spec. It will be run against several staff
