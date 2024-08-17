@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
  * 
  * <p>PS2 instructions: you MUST use the provided rep.
  */
-public class ConcreteVerticesGraph implements Graph<String> {
+public class ConcreteVerticesGraph<L> implements Graph<L> {
     
-    private final List<Vertex> vertices = new ArrayList<>();
+    private final List<Vertex<L>> vertices = new ArrayList<>();
     
     // Abstraction function:
     //   TODO
@@ -28,21 +28,21 @@ public class ConcreteVerticesGraph implements Graph<String> {
     public ConcreteVerticesGraph(){}
     // TODO checkRep
     
-    @Override public boolean add(String vertex) {
-        for(Vertex v:vertices){
+    @Override public boolean add(L vertex) {
+        for(Vertex<L> v:vertices){
             if(v.getName().equals(vertex)){
                 return false;
             }
         }
-        vertices.add(new Vertex(vertex));
+        vertices.add(new Vertex<L>(vertex));
         return true;
     }
     
-    @Override public int set(String source, String target, int weight) {
+    @Override public int set(L source, L target, int weight) {
         if(weight < 0 || source.equals(target))return -1;
         else if(weight == 0){
             int returnWeight = 0;
-            for(Vertex v:vertices){
+            for(Vertex<L> v:vertices){
                 if(v.getName().equals(source)){
                     returnWeight = v.deleteEdgeFromThisVertex(target);
                 }
@@ -54,8 +54,8 @@ public class ConcreteVerticesGraph implements Graph<String> {
         }
         else{
             int returnWeight = 0;
-            Vertex v1 = null,v2 = null;
-            for(Vertex v:vertices){
+            Vertex<L> v1 = null,v2 = null;
+            for(Vertex<L> v:vertices){
                 if(v.getName().equals(source)){
                     v1 = v;
                 }
@@ -64,30 +64,30 @@ public class ConcreteVerticesGraph implements Graph<String> {
                 }
             }
             if(v1!= null && v2!= null){
-                returnWeight = v1.addEdgeFromThisVertex(target,weight);
+                v1.addEdgeFromThisVertex(target,weight);
                 returnWeight = v2.addEdgeToThisVertex(source,weight);
                 return returnWeight;
             } else if(v1 == null && v2 != null){
                 v2.addEdgeToThisVertex(source,weight);
-                vertices.add(new Vertex(source));
+                vertices.add(new Vertex<L>(source));
                 vertices.get(vertices.size()-1).addEdgeFromThisVertex(target,weight);
             }else if(v1 !=null && v2 == null){
                 v1.addEdgeFromThisVertex(target,weight);
-                vertices.add(new Vertex(target));
+                vertices.add(new Vertex<L>(target));
                 vertices.get(vertices.size()-1).addEdgeToThisVertex(source,weight);
             }else{
-                vertices.add(new Vertex(source));
+                vertices.add(new Vertex<L>(source));
                 vertices.get(vertices.size()-1).addEdgeFromThisVertex(target,weight);
-                vertices.add(new Vertex(target));
+                vertices.add(new Vertex<L>(target));
                 vertices.get(vertices.size()-1).addEdgeToThisVertex(source,weight);
             }
             return returnWeight;
         }
     }
     
-    @Override public boolean remove(String vertex) {
+    @Override public boolean remove(L vertex) {
         boolean returnValue = false;
-        for(Vertex v : vertices){
+        for(Vertex<L> v : vertices){
             if(v.getName().equals(vertex)){
                 returnValue = true;
                 vertices.remove(v);
@@ -96,19 +96,19 @@ public class ConcreteVerticesGraph implements Graph<String> {
         }
         if(!returnValue) return false;
         else{
-            for(Vertex v:vertices){
+            for(Vertex<L> v:vertices){
                 v.deleteVertex(vertex);
             }
         }
         return true;
     }
     
-    @Override public Set<String> vertices() {
+    @Override public Set<L> vertices() {
         return vertices.stream().map(Vertex::getName).collect(Collectors.toSet());
     }
     
-    @Override public Map<String, Integer> sources(String target) {
-        for(Vertex v:vertices){
+    @Override public Map<L, Integer> sources(L target) {
+        for(Vertex<L> v:vertices){
             if(v.getName().equals(target)){
                 return new HashMap<>(v.getTarget());
             }
@@ -116,8 +116,8 @@ public class ConcreteVerticesGraph implements Graph<String> {
         return new HashMap<>();
     }
     
-    @Override public Map<String, Integer> targets(String source) {
-       for(Vertex v:vertices){
+    @Override public Map<L, Integer> targets(L source) {
+       for(Vertex<L> v:vertices){
            if(v.getName().equals(source)){
                return new HashMap<>(v.getSource());
            }
@@ -130,12 +130,12 @@ public class ConcreteVerticesGraph implements Graph<String> {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("vertices:\n");
-        for(Vertex v: vertices){
+        for(Vertex<L> v: vertices){
             sb.append(v.getName()).append(" ");
         }
         sb.append("\nedges:\n");
-        for(Vertex v: vertices){
-            for(String k:v.getSource().keySet()){
+        for(Vertex<L> v: vertices){
+            for(L k:v.getSource().keySet()){
                 sb.append(v.getName()).append("-").append(k).append(":").append(v.getSource().get(k));
                 sb.append("   ");
             }
@@ -154,12 +154,12 @@ public class ConcreteVerticesGraph implements Graph<String> {
  * <p>PS2 instructions: the specification and implementation of this class is
  * up to you.
  */
-class Vertex {
+class Vertex<L> {
     
     // TODO fields
-    private final String name;
-    private final Map<String,Integer> sourceMap;
-    private final Map<String,Integer> targetMap;
+    private final L name;
+    private final Map<L,Integer> sourceMap;
+    private final Map<L,Integer> targetMap;
     
     // Abstraction function:
     //   represent a vertex in the directed graph,this vertex 's two maps as source and target
@@ -173,7 +173,7 @@ class Vertex {
     //   use of HashMap to create a copy of edges to avoid exposing the rep of ConcreteVerticesGraph.
     
     // constructor
-    public Vertex(String name){
+    public Vertex(L name){
         this.name = name;
         this.sourceMap = new HashMap<>();
         this.targetMap = new HashMap<>();
@@ -181,7 +181,7 @@ class Vertex {
     // TODO checkRep
     
     // TODO methods
-    public String getName(){
+    public L getName(){
         return name;
     }
 
@@ -190,14 +190,14 @@ class Vertex {
      * @return a copy of the edges map,to avoid exposing the rep of ConcreteVerticesGraph.
      *
      */
-    public Map<String,Integer> getSource(){
+    public Map<L,Integer> getSource(){
         return new HashMap<>(sourceMap);
     }
     /**get target Map which this vertex is as the target of the edge
      *
      * @return a copy of the edges map,to avoid exposing the rep of ConcreteVerticesGraph.
      */
-    public Map<String,Integer> getTarget(){
+    public Map<L,Integer> getTarget(){
         return new HashMap<>(targetMap);
     }
 
@@ -209,7 +209,7 @@ class Vertex {
      * @param weight the weight of the edge
      * @return the old weight of the edge,or 0 if the edge is new.
      */
-    public int addEdgeFromThisVertex(String target,int weight){
+    public int addEdgeFromThisVertex(L target,int weight){
         if(sourceMap.containsKey(target)){
             int oldWeight = sourceMap.get(target);
             sourceMap.put(target,weight);
@@ -228,7 +228,7 @@ class Vertex {
      * @param weight the weight of the edge.
      * @return the old weight of the edge,or 0 if the edge is new.
      */
-    public int addEdgeToThisVertex(String source,int weight){
+    public int addEdgeToThisVertex(L source,int weight){
         if(this.targetMap.containsKey(source)){
             int oldWeight = this.targetMap.get(source);
             this.targetMap.put(source,weight);
@@ -245,7 +245,7 @@ class Vertex {
      * @param target the target vertex of the edge to be deleted.
      * @return the weight of the edge,or 0 if the edge does not exist.
      */
-    public int deleteEdgeFromThisVertex(String target){
+    public int deleteEdgeFromThisVertex(L target){
         if(sourceMap.containsKey(target)){
             int weight = sourceMap.get(target);
             sourceMap.remove(target);
@@ -262,7 +262,7 @@ class Vertex {
      * @param source the source vertex of the edge to be deleted.
      * @return the weight of the edge,or 0 if the edge does not exist.
      */
-    public int deleteEdgeToThisVertex(String source){
+    public int deleteEdgeToThisVertex(L source){
         if(targetMap.containsKey(source)){
             int weight = targetMap.get(source);
             targetMap.remove(source);
@@ -283,7 +283,7 @@ class Vertex {
      * @param vertex the vertex of the edge to be deleted.
      *
      */
-    public void deleteVertex(String vertex){
+    public void deleteVertex(L vertex){
         sourceMap.remove(vertex);
         targetMap.remove(vertex);
     }
@@ -293,11 +293,11 @@ class Vertex {
         StringBuilder sb = new StringBuilder();
         sb.append("Vertex name:").append(this.name);
         sb.append("\nFromThisVertex:\n");
-        for(String target:sourceMap.keySet()){
+        for(L target:sourceMap.keySet()){
             sb.append(target).append(":").append(sourceMap.get(target)).append("\n");
         }
         sb.append("\nToThisVertex:\n");
-        for(String source:targetMap.keySet()){
+        for(L source:targetMap.keySet()){
             sb.append(source).append(":").append(targetMap.get(source)).append("\n");
         }
         return sb.toString();

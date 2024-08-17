@@ -8,9 +8,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Tests for ConcreteEdgesGraph.
@@ -26,7 +24,7 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
      * Provide a ConcreteEdgesGraph for tests in GraphInstanceTest.
      */
     @Override public Graph<String> emptyInstance() {
-        return new ConcreteEdgesGraph();
+        return new ConcreteEdgesGraph<>();
     }
     
     /*
@@ -49,7 +47,7 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
 
     @Test
     public void testEdge(){
-        Edge e1 = new Edge("a", "b",1);
+        Edge<String> e1 = new Edge<String>("a", "b",1);
         int weight = e1.getWeight();
         weight = 2;
         assertEquals(1, e1.getWeight());

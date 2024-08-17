@@ -10,10 +10,10 @@ import java.util.*;
  * 
  * <p>PS2 instructions: you MUST use the provided rep.
  */
-public class ConcreteEdgesGraph implements Graph<String> {
+public class ConcreteEdgesGraph<L> implements Graph<L> {
     
-    private final Set<String> vertices = new HashSet<>();
-    private final List<Edge> edges = new ArrayList<>();
+    private final Set<L> vertices = new HashSet<>();
+    private final List<Edge<L>> edges = new ArrayList<>();
     
     // Abstraction function:
     //   public boolean add(String vertex)
@@ -37,7 +37,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
     public ConcreteEdgesGraph(){}
     // TODO checkRep
     
-    @Override public boolean add(String vertex) {
+    @Override public boolean add(L vertex) {
         if(this.vertices.contains(vertex)){
             return false;
         }else{
@@ -46,7 +46,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
         }
     }
     
-    @Override public int set(String source, String target, int weight) {
+    @Override public int set(L source, L target, int weight) {
         if(weight < 0|| source.equals(target))return -1;
         else if(weight == 0){
             for(Edge edge : this.edges){
@@ -77,7 +77,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
 
     }
     
-    @Override public boolean remove(String vertex) {
+    @Override public boolean remove(L vertex) {
         boolean findVertex = false;
         //reverse_remove will not cause index problem while removing in iteration
         for(int i=edges.size()-1;i>=0;i--){
@@ -92,13 +92,13 @@ public class ConcreteEdgesGraph implements Graph<String> {
         return findVertex;
     }
     
-    @Override public Set<String> vertices() {
+    @Override public Set<L> vertices() {
         return new HashSet<>(vertices);
     }
     
-    @Override public Map<String, Integer> sources(String target) {
-        Map<String,Integer> mp = new HashMap<>();
-        for(Edge edge:this.edges){
+    @Override public Map<L, Integer> sources(L target) {
+        Map<L,Integer> mp = new HashMap<>();
+        for(Edge<L> edge:this.edges){
             if(edge.getTarget().equals(target)){
                 mp.put(edge.getSource(),edge.getWeight());
             }
@@ -106,9 +106,9 @@ public class ConcreteEdgesGraph implements Graph<String> {
         return mp;
     }
     
-    @Override public Map<String, Integer> targets(String source) {
-        Map<String,Integer> mp = new HashMap<>();
-        for(Edge edge:this.edges){
+    @Override public Map<L, Integer> targets(L source) {
+        Map<L,Integer> mp = new HashMap<>();
+        for(Edge<L> edge:this.edges){
             if(edge.getSource().equals(source)) {
                 mp.put(edge.getTarget(), edge.getWeight());
             }
@@ -132,10 +132,10 @@ public class ConcreteEdgesGraph implements Graph<String> {
  * <p>PS2 instructions: the specification and implementation of this class is
  * up to you.
  */
-class Edge {
+class Edge<L> {
     //fields
-    private final String source;
-    private final String target;
+    private final L source;
+    private final L target;
     private final int weight;
 
     // Abstraction function:
@@ -156,7 +156,7 @@ class Edge {
      *Edge would be created in ConcreteEdgesGraph set() method
      *
      */
-    public Edge(String source, String target, int weight) {
+    public Edge(L source, L target, int weight) {
         this.source = source;
         this.target = target;
         this.weight = weight;
@@ -165,17 +165,17 @@ class Edge {
 
 
     //methods
-    public String getSource() {
+    public L getSource() {
         return source;
     }
-    public String getTarget() {
+    public L getTarget() {
         return target;
     }
     public int getWeight() {
         return weight;
     }
 
-    public boolean findEdge(String source,String target){
+    public boolean findEdge(L source,L target){
         return this.source.equals(source) && this.target.equals(target);
     }
 
