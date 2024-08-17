@@ -5,8 +5,7 @@ package graph;
 
 import static org.junit.Assert.*;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -56,7 +55,9 @@ public abstract class GraphInstanceTest {
         assertEquals("expected new graph to have no vertices",
                 Collections.emptySet(), emptyInstance().vertices());
     }
-    
+
+
+
     // TODO other tests for instance methods of Graph
     @Test
     public void testInitialVerticesAddVertex(){
@@ -81,7 +82,7 @@ public abstract class GraphInstanceTest {
     public  void testRemoveEdgeThoughSet(){
         Graph<String> g = emptyInstance();
         g.set("A","B",1);
-        assertEquals("excpect 0",1,g.set("A","B",0));
+        assertEquals("excpect 1",1,g.set("A","B",0));
         assertEquals("excepct 0",0,g.set("A","B",0));
     }
 
@@ -89,8 +90,8 @@ public abstract class GraphInstanceTest {
     public void testRemove(){
         Graph<String> g = emptyInstance();
         g.set("A","B",1);
-        g.set("A","C",1);
-        g.set("B","C",1);
+        g.set("A","C",2);
+        g.set("B","C",3);
         assertFalse("except false",g.remove("D"));
         assertTrue("except true",g.remove("A"));
         assertEquals("there should be 2 vertices ",2,g.vertices().size());
@@ -98,7 +99,8 @@ public abstract class GraphInstanceTest {
         assertTrue("vertex B should exist",g.vertices().contains("B"));
         assertTrue("vertex C should exist",g.vertices().contains("C"));
 
-        assertEquals("edge B-C should exist ",1,g.set("B","C",1));
+        System.out.println(g);
+        assertEquals("edge B-C should exist ",3,g.set("B","C",1));
         assertEquals("edge A-C should not exist",0,g.set("A","C",0));
         assertEquals("edge A-B should not exist",0,g.set("A","C",0));
     }

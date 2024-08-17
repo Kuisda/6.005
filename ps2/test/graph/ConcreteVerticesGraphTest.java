@@ -34,6 +34,17 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
         assertEquals("expected new graph to have no vertices",
                 Collections.emptySet(), emptyInstance().vertices());
     }
+
+    @Test
+    public void testVertices(){
+        Graph<String> g = emptyInstance();
+        g.add("A");
+        g.add("B");
+        g.add("C");
+
+        System.out.println(g.vertices());
+    }
+
     // Testing strategy for ConcreteVerticesGraph.toString()
     //   TODO
     
@@ -47,5 +58,16 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     //   TODO
     
     // TODO tests for operations of Vertex
+    @Test
+    public void testToString(){
+        Graph<String> g = emptyInstance();
+        g.add("A");
+        g.add("B");
+        g.add("C");
+        g.set("A","B",1);
+        g.set("A","C",2);
+        g.set("B","C",3);
+        System.out.println(g);
+    }
     
 }
