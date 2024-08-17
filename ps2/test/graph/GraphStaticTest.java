@@ -21,6 +21,7 @@ public class GraphStaticTest {
     //   empty()
     //     no inputs, only output is empty graph
     //     observe with vertices()
+
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {

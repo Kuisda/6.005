@@ -7,6 +7,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import java.util.Collections;
+
 /**
  * Tests for ConcreteVerticesGraph.
  * 
@@ -27,7 +29,11 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     /*
      * Testing ConcreteVerticesGraph...
      */
-    
+    @Test
+    public void testInitialVerticesEmpty(){
+        assertEquals("expected new graph to have no vertices",
+                Collections.emptySet(), emptyInstance().vertices());
+    }
     // Testing strategy for ConcreteVerticesGraph.toString()
     //   TODO
     
