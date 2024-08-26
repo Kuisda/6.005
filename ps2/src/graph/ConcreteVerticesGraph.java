@@ -16,9 +16,11 @@ public class ConcreteVerticesGraph<L> implements Graph<L> {
     private final List<Vertex<L>> vertices = new ArrayList<>();
     
     // Abstraction function:
-    //   TODO
+    //   represent a directed graph,this graph has a list of vertices.
     // Representation invariant:
-    //   TODO
+    //   vertices represent the vertices of the directed graph.
+    //   each vertex has a name,a source map and a target map.
+    //   the source map represents the edges from this vertex to other vertices and their weights.
     // Safety from rep exposure:
     //   use private and final fields to ensure that the rep is not exposed.
     //   Vertex is Safety from rep exposure

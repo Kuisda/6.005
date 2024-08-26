@@ -3,8 +3,13 @@
  */
 package poet;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import graph.Graph;
 
@@ -55,11 +60,11 @@ public class GraphPoet {
     private final Graph<String> graph = Graph.empty();
     
     // Abstraction function:
-    //   TODO
+    //   represent a poet graph...
     // Representation invariant:
-    //   TODO
+    //   empty:an empty graph
     // Safety from rep exposure:
-    //   TODO
+    //   the graph is private and final; and the graph structure is not safety from pre exposure
     
     /**
      * Create a new poet with the graph from corpus (as described above).
@@ -68,7 +73,21 @@ public class GraphPoet {
      * @throws IOException if the corpus file cannot be found or read
      */
     public GraphPoet(File corpus) throws IOException {
-        throw new RuntimeException("not implemented");
+        BufferedReader br = new BufferedReader(new FileReader(corpus));
+        String line;
+        while((line = br.readLine())!=null){
+            String[] words = line.split("[\\s]+");
+//            System.out.println(Arrays.toString(words));
+            for(int i=1;i<words.length;i++){
+                if(graph.targets(wordFormat(words[i-1])).get(wordFormat(words[i]))==null){
+                    graph.set(wordFormat(words[i-1]),wordFormat(words[i]),1);
+                }else{
+                    graph.set(wordFormat(words[i-1]), wordFormat(words[i]), graph.targets(wordFormat(words[i-1])).get(wordFormat(words[i]))+1);
+                }
+            }
+        }
+//        System.out.println(graph.targets("this"));
+//        System.out.println(graph.sources("be"));
     }
     
     // TODO checkRep
@@ -80,7 +99,34 @@ public class GraphPoet {
      * @return poem (as described above)
      */
     public String poem(String input) {
-        throw new RuntimeException("not implemented");
+        String[] words = input.split("[\\s]+");
+        //this split may contain the punctuation,like "hello ,world",then will get [hello, ,world]
+        //by wordFormat,we will get correct format to match the word in graph
+        List<String> wordsList = new ArrayList<>( Arrays.asList(words));
+        int bias = 0;
+        for(int i=1;i<words.length;i++){
+            for(String k:graph.targets(wordFormat(words[i-1])).keySet()){
+                if(graph.sources(wordFormat(words[i])).get(k)!=null){
+//                    System.out.println(wordsList);
+//                    System.out.println("k:"+k);
+//                    System.out.println("i:"+i);
+                    wordsList.add(i+bias,k);
+                    bias+=1;
+                    break;
+                }
+            }
+        }
+        return String.join(" ", wordsList);
+    }
+
+    /**
+     * format the word which will put in the graph
+    *  format it to lower case and remove the punctuation at the beginning and end of the word
+     * @param input the word to be formatted
+     * @return the formatted word
+    * */
+    public String wordFormat(String input){
+        return input.replaceAll("^[\\p{Punct}]+|[\\p{Punct}]+$", "").toLowerCase();
     }
     
     // TODO toString()
