@@ -17,7 +17,7 @@ package expressivo;
 public interface Expression {
     
     // Datatype definition
-    //   TODO
+    // Expression = Number + Add(Expr,Expr,...) + Mul(Expr,Expr,Expr,...) + Bracket(Add|Mul,Add(Mul),...) + Cal(Add|Mul|Bracket,...)
     
     /**
      * Parse an expression.
@@ -28,7 +28,6 @@ public interface Expression {
     public static Expression parse(String input) {
         throw new RuntimeException("unimplemented");
     }
-    
     /**
      * @return a parsable representation of this expression, such that
      * for all e:Expression, e.equals(Expression.parse(e.toString())).

@@ -29,10 +29,45 @@ import Configuration;
  * For more information, see reading 18 about parser generators, which explains
  * how to use Antlr and has links to reference information.
  */
-root : sum EOF;
+
+
+//root : sum EOF;
+//sum : primitive ('+' primitive)*;
+//primitive : NUMBER | '(' sum ')';
+//NUMBER : [0-9]+;
+
+
+/*thought
+*think about the operator priority and an algorithm question to do similar thing that convert string to a tree with operator and number
+*For example:1*2+3 can convert to:
+*       +
+*      / \
+*     *   3
+*    / \
+*   1   2
+*you will find that the operator with lower priority will be higher in the tree.
+*the main idea is to divide the string to smaller one by the lowerst priority operator,the second lowerest operator,and so on.
+*
+*we can divide the string to smaller one first by the lowerst priority operator '+‘,
+*one thing to pay attention is the parentheses,the equation inside the parentheses should be seened as the highest priority
+*so the priority is : (...) > * > +
+*
+*so the first nontermial is sum which is used to describe the '+'
+*'+' divide the string to may parts,I call this parts as primitive
+*it consist NUMBER,multiply equation and parentheses sum (parentheses is also been defined,you can use some examples in following expression)
+*then it comes to the multiply,it may contain NUMBER and one of the higher priority operator,(...) , and it will represent the '*' operator
+*/
+
+root : calculate EOF;
+calculate: (sum|multiply)*;
 sum : primitive ('+' primitive)*;
-primitive : NUMBER | '(' sum ')';
-NUMBER : [0-9]+;
+primitive : NUMBER | '(' sum ')' | multiply;
+multiply: (NUMBER|'(' sum ')')  ('*' (NUMBER|'(' sum ')'))*;
+NUMBER : INT | FLOAT | VAR;
+INT: [0-9]+;
+FLOAT: [0-9]+ '.' [0-9]+;
+VAR: [a-zA-Z]+;
+
 
 /* Tell Antlr to ignore spaces around tokens. */
 SPACES : [ ]+ -> skip;
