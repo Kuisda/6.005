@@ -114,7 +114,7 @@ public class ExpressionLexer extends Lexer {
 	public String getSerializedATN() { return _serializedATN; }
 
 //	@Override
-//	public String[] getChannelNames() { return channelNames; }
+	public String[] getChannelNames() { return channelNames; }
 
 	@Override
 	public String[] getModeNames() { return modeNames; }

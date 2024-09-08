@@ -17,7 +17,8 @@ package expressivo;
 public interface Expression {
     
     // Datatype definition
-    // Expression = Number + Add(Expr,Expr,...) + Mul(Expr,Expr,Expr,...) + Bracket(Add|Mul,Add(Mul),...) + Cal(Add|Mul|Bracket,...)
+    // Expression = Empty + NumberExpr(double x) + VariableExpr(String x)+BinaryExpr(Expr,op,Expr)
+    // all the operations are '+' and '*' ,the sequence of the calculation will be completed during the parser step.
     
     /**
      * Parse an expression.
@@ -33,7 +34,7 @@ public interface Expression {
      * use espression inner representation to calculate to a value with type of double
      * @return value of the expression
      */
-    public double calculate();
+//    public double calculate(double x);
 
     /**
      * @return a parsable representation of this expression, such that
