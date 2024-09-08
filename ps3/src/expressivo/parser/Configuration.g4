@@ -6,7 +6,6 @@ grammar Configuration;
 
 // This puts a package statement at the top of the output Java files.
 @header {
-package expressivo.preparser;
 // Do not edit this .java file! Edit the grammar in Expression.g4 and re-run Antlr.
 }
 

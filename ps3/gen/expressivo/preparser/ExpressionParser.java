@@ -65,7 +65,7 @@ public class ExpressionParser extends Parser {
   }
 
   @Override
-  public String getGrammarFileName() { return "Expression.g4"; }
+  public String getGrammarFileName() { return "expressivo/parser/Expression.g4"; }
 
   @Override
   public String[] getRuleNames() { return ruleNames; }
