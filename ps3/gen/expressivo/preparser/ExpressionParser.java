@@ -1,6 +1,6 @@
 // Generated from Expression.g4 by ANTLR 4.5.1
 
-package expressivo.parser;
+package expressivo.preparser;
 // Do not edit this .java file! Edit the grammar in Expression.g4 and re-run Antlr.
 
 import org.antlr.v4.runtime.atn.*;
@@ -9,8 +9,6 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ExpressionParser extends Parser {
@@ -127,7 +125,7 @@ public class ExpressionParser extends Parser {
       setState(6);
       sum();
       setState(7);
-      match(EOF);
+      match(Recognizer.EOF);
       }
     }
     catch (RecognitionException re) {

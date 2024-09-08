@@ -28,6 +28,13 @@ public interface Expression {
     public static Expression parse(String input) {
         throw new RuntimeException("unimplemented");
     }
+
+    /**
+     * use espression inner representation to calculate to a value with type of double
+     * @return value of the expression
+     */
+    public double calculate();
+
     /**
      * @return a parsable representation of this expression, such that
      * for all e:Expression, e.equals(Expression.parse(e.toString())).
