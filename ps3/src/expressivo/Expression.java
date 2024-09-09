@@ -17,7 +17,7 @@ package expressivo;
 public interface Expression {
     
     // Datatype definition
-    // Expression = Empty + NumberExpr(double x) + VariableExpr(String x)+BinaryExpr(Expr,op,Expr)
+    // Expression =NumberExpr(double x) + VariableExpr(String x)+BinaryExpr(Expr,op,Expr)
     // all the operations are '+' and '*' ,the sequence of the calculation will be completed during the parser step.
     
     /**

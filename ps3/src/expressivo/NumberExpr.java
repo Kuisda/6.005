@@ -18,7 +18,7 @@ public class NumberExpr implements Expression{
 //    }
     @Override
     public String toString(){
-        return Double.toString(value);
+        return String.valueOf(value);
     }
 
     @Override

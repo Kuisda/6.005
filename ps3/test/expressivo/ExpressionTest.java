@@ -3,9 +3,17 @@
  */
 package expressivo;
 
-import static org.junit.Assert.*;
 
+import expressivo.parser.ExpressionLexer;
+import expressivo.parser.ExpressionParser;
+import org.antlr.v4.runtime.ANTLRInputStream;//there are two ANTLR packages, we need the v4 one
+import org.antlr.v4.runtime.CharStream;//there are two ANTLR packages, we need the v4 one
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * Tests for the Expression abstract data type.
@@ -22,5 +30,20 @@ public class ExpressionTest {
     
     
     // TODO tests for Expression
+
+    @Test
+    public void testPrintParserTree() throws IOException {
+        CharStream stream =  new ANTLRInputStream("1+2*3+(1+2*5)");
+        ExpressionLexer lexer = new ExpressionLexer(stream);
+        TokenStream tokens = new CommonTokenStream(lexer);
+
+        ExpressionParser parser = new ExpressionParser(tokens);
+
+        ParseTree tree = parser.root();
+
+        System.out.println(tree.toStringTree(parser));
+
+
+    }
     
 }
