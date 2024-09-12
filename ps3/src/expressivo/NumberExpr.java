@@ -1,5 +1,6 @@
 package expressivo;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class NumberExpr implements Expression{
@@ -30,5 +31,14 @@ public class NumberExpr implements Expression{
     @Override
     public int hashCode(){
         return Double.hashCode(value);
+    }
+
+    @Override
+    public Expression differentiate(String var) {
+        return new NumberExpr(0);
+    }
+    @Override
+    public Expression simplify(Map<String,Double> environment){
+        return this;
     }
 }

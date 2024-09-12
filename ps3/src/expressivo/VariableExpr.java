@@ -1,7 +1,7 @@
 package expressivo;
 
 
-
+import java.util.Map;
 
 public class VariableExpr implements Expression{
     private String variable;
@@ -26,6 +26,20 @@ public class VariableExpr implements Expression{
     @Override
     public int hashCode(){
         return variable.hashCode();
+    }
+
+    @Override
+    public Expression differentiate(String var) {
+        if(variable.equals(var))return new NumberExpr(1);
+        return new NumberExpr(0);
+    }
+
+    @Override
+    public Expression simplify(Map<String, Double> environment) {
+        if(environment.containsKey(variable)){
+            return new NumberExpr(environment.get(variable));
+        }
+        return this;
     }
 
 }

@@ -5,15 +5,19 @@ package expressivo;
 
 
 import expressivo.parser.ExpressionLexer;
+import expressivo.parser.ExpressionListener;
 import expressivo.parser.ExpressionParser;
+import expressivo.Listener.PrintEverything;
 import org.antlr.v4.runtime.ANTLRInputStream;//there are two ANTLR packages, we need the v4 one
 import org.antlr.v4.runtime.CharStream;//there are two ANTLR packages, we need the v4 one
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Stack;
 
 /**
  * Tests for the Expression abstract data type.
@@ -33,7 +37,7 @@ public class ExpressionTest {
 
     @Test
     public void testPrintParserTree() throws IOException {
-        CharStream stream =  new ANTLRInputStream("1+2*3+(1+2*5)");
+        CharStream stream =  new ANTLRInputStream("1+2*3+2*(1+2*5*x)");
         ExpressionLexer lexer = new ExpressionLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
 
@@ -43,7 +47,29 @@ public class ExpressionTest {
 
         System.out.println(tree.toStringTree(parser));
 
+        ParseTreeWalker walker = new ParseTreeWalker();
+        ExpressionListener listener = new PrintEverything();
+        walker.walk(listener, tree);
 
+    }
+    @Test
+    public void testStack(){
+        Stack<Integer> stack = new Stack<>();
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
+        System.out.println(stack.get(0));
+        System.out.println(stack);
+    }
+
+    @Test
+    public void testParseDouble(){
+        String s = "1";
+        Double d = 0.0;
+        if(s.matches("-?\\d+(\\.\\d+)?")){
+            d = Double.parseDouble(s);
+        }
+        System.out.println(d);
     }
     
 }

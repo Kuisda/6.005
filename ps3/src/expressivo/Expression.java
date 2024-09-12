@@ -3,6 +3,17 @@
  */
 package expressivo;
 
+
+import expressivo.parser.ExpressionLexer;
+import expressivo.parser.ExpressionParser;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import java.util.Map;
+
 /**
  * An immutable data type representing a polynomial expression of:
  *   + and *
@@ -17,7 +28,7 @@ package expressivo;
 public interface Expression {
     
     // Datatype definition
-    // Expression =NumberExpr(double x) + VariableExpr(String x)+BinaryExpr(Expr,op,Expr)
+    // Expression =NumberExpr(double x) + VariableExpr(String x)+AddExpr(Expr,Expr)+MulExpr(Expr,Expr)
     // all the operations are '+' and '*' ,the sequence of the calculation will be completed during the parser step.
     
     /**
@@ -27,7 +38,7 @@ public interface Expression {
      * @throws IllegalArgumentException if the expression is invalid
      */
     public static Expression parse(String input) {
-        throw new RuntimeException("unimplemented");
+        return Parser.parse(input);
     }
 
     /**
@@ -60,5 +71,16 @@ public interface Expression {
     public int hashCode();
     
     // TODO more instance methods
-    
+
+    /**@Param the variable to differentiate
+     * @return the derivative expression of this expression
+     */
+    public Expression differentiate(String var);
+
+
+    /**Simplify an expression.IF all the variables is set in environment map,then return a double-type value
+     *else return an expression without variables in environment
+     * @param environment maps variables to values.
+     */
+    public Expression simplify(Map<String,Double> environment);
 }
