@@ -1,5 +1,6 @@
 package expressivo;
 
+import expressivo.Listener.Calculate;
 import expressivo.Listener.MakeExpression;
 import expressivo.Listener.PrintEverything;
 import expressivo.parser.ExpressionLexer;
@@ -14,7 +15,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.Stack;
 
 public class Parser {
-
     public static Expression parse(String input){
         CharStream stream =  new ANTLRInputStream(input);
         ExpressionLexer lexer = new ExpressionLexer(stream);
@@ -24,13 +24,25 @@ public class Parser {
 
         ParseTree tree = parser.root();
 
-        //debug
-//        new ParseTreeWalker().walk(new PrintEverything(), tree);
-
         MakeExpression exprMaker = new MakeExpression();
         new ParseTreeWalker().walk(exprMaker, tree);
 
         return exprMaker.getExpression();
+    }
+
+    public static Expression parseCalculate(String input){
+        CharStream stream =  new ANTLRInputStream(input);
+        ExpressionLexer lexer = new ExpressionLexer(stream);
+        TokenStream tokens = new CommonTokenStream(lexer);
+
+        ExpressionParser parser = new ExpressionParser(tokens);
+
+        ParseTree tree = parser.root();
+
+        Calculate cal = new Calculate();
+        new ParseTreeWalker().walk(cal, tree);
+
+        return cal.getExpression();
     }
 }
 

@@ -71,5 +71,15 @@ public class ExpressionTest {
         }
         System.out.println(d);
     }
+
+    @Test
+    public void testVariable(){
+        String output = "1+2*3+2*(1+2*5*x)";
+        if(output.matches(".*[a-zA-Z]+.*")){
+            System.out.println("variable");
+        }else{
+            System.out.println("not variable");
+        }
+    }
     
 }

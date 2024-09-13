@@ -40,7 +40,11 @@ public class Commands {
      * @throws IllegalArgumentException if the expression is invalid
      */
     public static String simplify(String expression, Map<String,Double> environment) {
-        throw new RuntimeException("unimplemented");
+        String output =  Parser.parse(expression).simplify(environment).toString();
+        if(!output.matches(".*[a-zA-Z]+.*")){
+            output = Parser.parseCalculate(output).toString();
+        }
+        return output;
     }
     
 }
