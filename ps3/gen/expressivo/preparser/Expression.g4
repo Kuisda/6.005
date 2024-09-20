@@ -6,7 +6,7 @@
  * This file is the grammar file used by ANTLR.
  *
  * In order to compile this file, navigate to this folder
- * (src/expressivo/parser) and run the following command:
+ * (minesweeper/expressivo/parser) and run the following command:
  * 
  * java -jar ../../../lib/antlr.jar Expression.g4
  *
