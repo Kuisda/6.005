@@ -53,7 +53,7 @@ import Configuration;
 *so the priority is : (...) > * > +
 *
 *so the first nontermial is sum which is used to describe the '+'
-*'+' divide the string to may parts,I call this parts as primitive
+*'+' divide the string to many parts,I call this parts as primitive
 *it consist NUMBER,multiply equation and parentheses sum (parentheses is also been defined,you can use some examples in following expression)
 *then it comes to the multiply,it may contain NUMBER and one of the higher priority operator,(...) , and it will represent the '*' operator
 */
