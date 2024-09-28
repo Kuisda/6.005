@@ -11,10 +11,14 @@ import java.net.Socket;
 public class ServerHandler implements Runnable{
     private final Socket socket;
     private final Board board;
+    private final boolean debug;
+    private boolean close;
 
-    public ServerHandler(Board board,Socket socket) {
+    public ServerHandler(Board board,Socket socket,boolean debug) {
         this.socket = socket;
         this.board = board;
+        this.debug = debug;
+        this.close = false;
     }
     /**
      * Handle a single client connection. Returns when client disconnects.
@@ -25,14 +29,16 @@ public class ServerHandler implements Runnable{
     private void handleConnection(Socket socket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println("Welcome to Minesweeper Server!");
+        out.println(board.HelloMessage());
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 String output = handleRequest(line);
                 // TODO: Consider improving spec of handleRequest to avoid use of null
                 out.println(output);
+                if(close && !debug) break;
             }
         } finally {
+            board.HandleUserClose();
             out.close();
             in.close();
         }
@@ -55,7 +61,7 @@ public class ServerHandler implements Runnable{
         String[] tokens = input.split(" ");
         if (tokens[0].equals("look")) {
             System.out.println("Handle look request");
-            return "Handle look request";
+            return board.HandleLookMessage();
             // 'look' request
             // TODO Problem 5
         } else if (tokens[0].equals("help")) {
@@ -65,6 +71,7 @@ public class ServerHandler implements Runnable{
             // TODO Problem 5
         } else if (tokens[0].equals("bye")) {
             System.out.println("Handle bye request");
+            close = true;
             return board.HandleByeMessage();
             // 'bye' request
             // TODO Problem 5
@@ -73,7 +80,11 @@ public class ServerHandler implements Runnable{
             int y = Integer.parseInt(tokens[2]);
             if (tokens[0].equals("dig")) {
                 System.out.println("Handle dig request at " + x + ", " + y);
-                return board.HandleDigMessage(x, y);
+                String message =  board.HandleDigMessage(x, y);
+                if(message.contains("BOOM")){
+                    close = true;
+                }
+                return message;
                 // 'dig x y' request
                 // TODO Problem 5
             } else if (tokens[0].equals("flag")) {

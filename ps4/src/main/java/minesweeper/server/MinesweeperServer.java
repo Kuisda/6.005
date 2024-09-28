@@ -55,7 +55,7 @@ public class MinesweeperServer {
      */
     public void serve() throws IOException {
         while (true) {
-            new Thread(new ServerHandler(board,serverSocket.accept())).start();
+            new Thread(new ServerHandler(board,serverSocket.accept(),debug)).start();
         }
     }
 
@@ -205,6 +205,7 @@ public class MinesweeperServer {
                 board = new Board(sizeX, sizeY, boardData);
         }
         MinesweeperServer server = new MinesweeperServer(port, debug);
+        System.out.println("Server running at:localhost:" + port + " debug:"+debug);
         server.serve();
     }
 }

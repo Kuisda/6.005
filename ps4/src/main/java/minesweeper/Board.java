@@ -3,8 +3,6 @@
  */
 package minesweeper;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -43,7 +41,7 @@ public class Board {
      * @param sizeX
      * @param sizeY
      */
-    public Board(int sizeX,int sizeY) {
+    public Board(int sizeX, int sizeY) {
         this.board = new char[sizeX][sizeY];
         this.realboard = new int[sizeX][sizeY];
         this.sizeX = sizeX;
@@ -75,7 +73,7 @@ public class Board {
         this.realboard = new int[sizeX][sizeY];
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        this.players = 1;
+        this.players = 0;
         int numMines = (int) ((sizeX * sizeY) * 0.2);
 
         for(int i=0;i<sizeX;i++){
@@ -109,19 +107,13 @@ public class Board {
         this.sizeY = sizeY;
         this.board = new char[sizeX][sizeY];
         this.realboard = new int[sizeX][sizeY];
+        this.players = 0;
         for(int i=0;i<sizeX;i++){
             for(int j=0;j<sizeY;j++){
                 board[i][j] = '-';
                 realboard[i][j] = boardData.get(i*sizeY+j);
             }
         }
-    }
-
-    public Board(char[][] board, int[][] realboard, int sizeX, int sizeY) {
-        this.board = board;
-        this.realboard = realboard;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
     }
 
     /**return a board message,
@@ -136,7 +128,7 @@ public class Board {
                 if (j != sizeY - 1) {
                     sb.append(" ");
                 } else {
-                    sb.append("\n");
+                    sb.append("\r\n");
                 }
             }
         }
@@ -148,13 +140,24 @@ public class Board {
      *
      */
     public String HelloMessage(){
-        players +=1;
-        return "Welcome to Minesweeper!  Board: " + sizeY + " columns" + sizeX + " rows  " + "Players: " + players + " including you." +
-                " Type 'help' for help.\r\n";
+        synchronized (this){
+            players += 1;
+            return "Welcome to Minesweeper!  Board: " + sizeY + " columns " + sizeX + " rows  " + "Players: " + players + " including you." +
+                    " Type 'help' for help.\r\n";
+        }
+    }
+
+    /**
+     * exec when client close the connection to the server.
+     */
+    public void HandleUserClose(){
+        synchronized (this){
+            players -= 1;
+        }
     }
 
     public String HandleByeMessage(){
-        players -=1;
+//        players -=1;
         return "Bye!\r\n";
     }
 
@@ -180,19 +183,21 @@ public class Board {
      * @return "BOOM" message or board message
      */
     public String HandleDigMessage(int x,int y){
-        if(x<0 || x>=sizeX || y<0 || y>=sizeY){
+        synchronized (this){
+            if (x < 0 || x >= sizeX || y < 0 || y >= sizeY) {
+                return BoardMessage();
+            }
+            if (board[x][y] == '-') {
+                if (realboard[x][y] == 1) {
+                    ChangeBoardAfterFailDig(x, y);
+//                    players -= 1;
+                    return "BOOM!\r\n";
+                } else {
+                    ChangeBoardAfterSuccessDig(x, y);
+                }
+            }
             return BoardMessage();
         }
-        if(board[x][y] == '-'){
-            if(realboard[x][y] == 1){
-                ChangeBoardAfterFailDig(x,y);
-                players -=1;
-                return "BOOM!\r\n";
-            }else{
-                ChangeBoardAfterSuccessDig(x,y);
-            }
-        }
-        return BoardMessage();
     }
 
     /**
@@ -204,24 +209,29 @@ public class Board {
      * @return
      */
     public String HandleFlagMessage(int x,int y){
-        if(x<0 || x>=sizeX || y<0 || y>=sizeY){
+        synchronized (this) {
+            if (x < 0 || x >= sizeX || y < 0 || y >= sizeY) {
+                return BoardMessage();
+            }
+            if (board[x][y] == '-') {
+                board[x][y] = 'F';
+            }
             return BoardMessage();
         }
-        if(board[x][y] == '-'){
-            board[x][y] = 'F';
-        }
-        return BoardMessage();
     }
 
     public String HandleDeflagMessage(int x,int y){
-        if(x<0 || x>=sizeX || y<0 || y>=sizeY){
+        synchronized (this){
+            if (x < 0 || x >= sizeX || y < 0 || y >= sizeY) {
+                return BoardMessage();
+            }
+            if (board[x][y] == 'F') {
+                board[x][y] = '-';
+            }
             return BoardMessage();
         }
-        if(board[x][y] == 'F'){
-            board[x][y] = '-';
-        }
-        return BoardMessage();
     }
+
 
 
     /**when client dig a position without a mine ,change the board to show the state of the board after the dig.
