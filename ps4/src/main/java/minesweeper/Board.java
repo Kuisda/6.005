@@ -3,7 +3,9 @@
  */
 package minesweeper;
 
-import java.util.Random;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 /**
  * TODO: Specification
@@ -11,11 +13,11 @@ import java.util.Random;
 public class Board {
     // TODO: Abstraction function, rep invariant, rep exposure, thread safety
     // Abstraction function:
-    //     represents a board of minesweeper game,the board will be seened to the user,like a player will see in the Minesweeper game.
-    //     the realboard will onlu include the mine positions,in one word,the real situation
+    //     represents a board of minesweeper game,the board message will be send to the user,like a player will see in the Minesweeper game.
+    //     the realboard will only include the mine positions,in one word,the real situation
     // req invariant:
-    //     private final char[][] board;
-    //  private final int[][] realboard;
+    //    private final char[][] board;
+    //    private final int[][] realboard; //1 represent mine,0 represent empty
     //    private final int sizeX;
     //    private final int sizeY;
     //    private final int players;
@@ -23,13 +25,15 @@ public class Board {
     //     use private and final fields to ensure that the rep is not exposed.
     //     the board can only be modified through the public methods provided.
     //     the realboard will generate at the beginning of the game, and will not be modified.
-    // TODO: Specify, test, and implement in problem 2
+    // thread safety argument:
+    //     the rep:sizeX,sizeY,realboard and dir will not be modified after the constructor,they are immutable.
+    //     the functions that return or change variable players and board is needed to be care about thread safety.
 
     private final char[][] board;
     private final int[][] realboard;
     private final int sizeX;
     private final int sizeY;
-    private final int players;
+    private int players;
     private final int[][] dir = {{-1,0},{1,0},{0,1},{0,-1},{-1,-1},{-1,1},{1,-1},{1,1}};
 
 
@@ -44,7 +48,7 @@ public class Board {
         this.realboard = new int[sizeX][sizeY];
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        this.players = 1;
+        this.players = 0;
         int numMines = (int) ((sizeX * sizeY) * 0.2);
 
         for(int i=0;i<sizeX;i++){
@@ -60,7 +64,7 @@ public class Board {
             int row = position/sizeY;
             int col = position%sizeY;
             if(realboard[row][col] == 0){
-                realboard[row][col] = -1;
+                realboard[row][col] = 1;
                 numMines-=1;
             }
         }
@@ -87,10 +91,37 @@ public class Board {
             int row = position/sizeY;
             int col = position%sizeY;
             if(realboard[row][col] == 0){
-                realboard[row][col] = -1;
+                realboard[row][col] = 1;
                 numMines-=1;
             }
         }
+    }
+
+    /**
+     * constructor to load board from file.
+     * @param sizeX
+     * @param sizeY
+     * @param boardData a list of characters representing the board.Read from file.(required its length equals to sizeX*sizeY)
+     *
+     */
+    public Board(int sizeX,int sizeY,ArrayList<Integer> boardData){
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.board = new char[sizeX][sizeY];
+        this.realboard = new int[sizeX][sizeY];
+        for(int i=0;i<sizeX;i++){
+            for(int j=0;j<sizeY;j++){
+                board[i][j] = '-';
+                realboard[i][j] = boardData.get(i*sizeY+j);
+            }
+        }
+    }
+
+    public Board(char[][] board, int[][] realboard, int sizeX, int sizeY) {
+        this.board = board;
+        this.realboard = realboard;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
     }
 
     /**return a board message,
@@ -117,11 +148,13 @@ public class Board {
      *
      */
     public String HelloMessage(){
+        players +=1;
         return "Welcome to Minesweeper!  Board: " + sizeY + " columns" + sizeX + " rows  " + "Players: " + players + " including you." +
                 " Type 'help' for help.\r\n";
     }
 
     public String HandleByeMessage(){
+        players -=1;
         return "Bye!\r\n";
     }
 
@@ -151,8 +184,9 @@ public class Board {
             return BoardMessage();
         }
         if(board[x][y] == '-'){
-            if(realboard[x][y] == -1){
+            if(realboard[x][y] == 1){
                 ChangeBoardAfterFailDig(x,y);
+                players -=1;
                 return "BOOM!\r\n";
             }else{
                 ChangeBoardAfterSuccessDig(x,y);
@@ -234,7 +268,7 @@ public class Board {
             int tempx = x+dir[i][0];
             int tempy = y+dir[i][1];
             if(tempx>=0 && tempx<sizeX && tempy>=0 && tempy<sizeY){
-                if(realboard[tempx][tempy] == -1){
+                if(realboard[tempx][tempy] == 1){
                     count += 1;
                 }
             }

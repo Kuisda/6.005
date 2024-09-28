@@ -15,7 +15,9 @@ import minesweeper.Board;
 public class MinesweeperServer {
 
     // System thread safety argument
-    //   TODO Problem 5
+    //  First of all the ServerHandler don't have to care about synchronization,because they only start to interact with only one client.
+    //  Then,MinesweeperServer is for distribute handle threads to different clients,it means it has the ability to handle multiple clients' visit .
+    //  So,all have to concerned about is the board.As the board is thread safe , so the whole system is thread safe.
 
     /** Default server port. */
     private static final int DEFAULT_PORT = 4444;
@@ -27,6 +29,8 @@ public class MinesweeperServer {
     private final ServerSocket serverSocket;
     /** True if the server should *not* disconnect a client after a BOOM message. */
     private final boolean debug;
+
+    private static Board board;
 
     // TODO: Abstraction function, rep invariant, rep exposure
 
@@ -51,7 +55,7 @@ public class MinesweeperServer {
      */
     public void serve() throws IOException {
         while (true) {
-            new Thread(new ServerHandler(serverSocket.accept())).start();
+            new Thread(new ServerHandler(board,serverSocket.accept())).start();
         }
     }
 
@@ -173,7 +177,33 @@ public class MinesweeperServer {
     public static void runMinesweeperServer(boolean debug, Optional<File> file, int sizeX, int sizeY, int port) throws IOException {
         
         // TODO: Continue implementation here in problem 4
-
+        if(!file.isPresent()){
+            board = new Board(sizeX, sizeY);
+        }else{
+                Scanner reader = new Scanner(file.get());
+                //read first line to get sizeX and sizeY
+                String line = reader.nextLine();
+                String[] temp = line.split(" ");
+                if(temp.length!= 2){
+                    throw new IllegalArgumentException("Invalid input file format.The first line should be sizeX sizeY." +
+                            "Then the board should only contain 0 or 1.0 for empty cell and 1 for mine.");
+                }
+                sizeX = Integer.parseInt(temp[0]);
+                sizeY = Integer.parseInt(temp[1]);
+                ArrayList<Integer> boardData = new ArrayList<>();
+                while(reader.hasNextLine()){
+                    line = reader.nextLine();
+                    temp = line.split(" ");
+                    for(String s:temp){
+                        boardData.add(s.charAt(0)-'0');
+                    }
+                }
+                if(boardData.size()!= sizeX*sizeY){
+                    throw new IllegalArgumentException("Invalid input file format.The board size is not correct." +
+                            "input boardData should have size "+sizeX*sizeY);
+                }
+                board = new Board(sizeX, sizeY, boardData);
+        }
         MinesweeperServer server = new MinesweeperServer(port, debug);
         server.serve();
     }

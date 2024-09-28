@@ -1,5 +1,7 @@
 package minesweeper.server;
 
+import minesweeper.Board;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,9 +10,11 @@ import java.net.Socket;
 
 public class ServerHandler implements Runnable{
     private final Socket socket;
+    private final Board board;
 
-    public ServerHandler(Socket socket) {
+    public ServerHandler(Board board,Socket socket) {
         this.socket = socket;
+        this.board = board;
     }
     /**
      * Handle a single client connection. Returns when client disconnects.
@@ -25,10 +29,8 @@ public class ServerHandler implements Runnable{
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 String output = handleRequest(line);
-                if (output != null) {
-                    // TODO: Consider improving spec of handleRequest to avoid use of null
-                    out.println(output);
-                }
+                // TODO: Consider improving spec of handleRequest to avoid use of null
+                out.println(output);
             }
         } finally {
             out.close();
@@ -40,13 +42,14 @@ public class ServerHandler implements Runnable{
      * Handler for client input, performing requested operations and returning an output message.
      *
      * @param input message from client
-     * @return message to client, or null if none
+     * @return message to client, or ''if none
      */
     private String handleRequest(String input) {
         String regex = "(look)|(help)|(bye)|"
                 + "(dig -?\\d+ -?\\d+)|(flag -?\\d+ -?\\d+)|(deflag -?\\d+ -?\\d+)";
         if ( ! input.matches(regex)) {
             // invalid input
+            return "Invalid input. Please try again.";
             // TODO Problem 5
         }
         String[] tokens = input.split(" ");
@@ -57,12 +60,12 @@ public class ServerHandler implements Runnable{
             // TODO Problem 5
         } else if (tokens[0].equals("help")) {
             System.out.println("Handle help request");
-            return "Handle help request";
+            return board.HandleHelpMessage();
             // 'help' request
             // TODO Problem 5
         } else if (tokens[0].equals("bye")) {
             System.out.println("Handle bye request");
-            return "Handle bye request";
+            return board.HandleByeMessage();
             // 'bye' request
             // TODO Problem 5
         } else {
@@ -70,17 +73,17 @@ public class ServerHandler implements Runnable{
             int y = Integer.parseInt(tokens[2]);
             if (tokens[0].equals("dig")) {
                 System.out.println("Handle dig request at " + x + ", " + y);
-                return "Handle dig request at " + x + ", " + y;
+                return board.HandleDigMessage(x, y);
                 // 'dig x y' request
                 // TODO Problem 5
             } else if (tokens[0].equals("flag")) {
                 System.out.println("Handle flag request at " + x + ", " + y);
-                return "Handle flag request at " + x + ", " + y;
+                return board.HandleFlagMessage(x,y);
                 // 'flag x y' request
                 // TODO Problem 5
             } else if (tokens[0].equals("deflag")) {
                 System.out.println("Handle deflag request at " + x + ", " + y);
-                return "Handle deflag request at " + x + ", " + y;
+                return board.HandleDeflagMessage(x,y);
                 // 'deflag x y' request
                 // TODO Problem 5
             }
